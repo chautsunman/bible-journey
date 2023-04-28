@@ -7,7 +7,7 @@ import CardContent from '@mui/material/CardContent';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-import TypeColorBlock from './type_color_block';
+import TypeColorBlock from '../components/type_color_block';
 
 import JourneyRecord from '../types/journey_record';
 

@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -16,11 +17,15 @@ interface JourneySummaryItemProps {
 
 const JourneySummaryItem = (props: JourneySummaryItemProps) => {
   const {summary, onSelectBookChapter} = props;
+  const book = summary.book;
 
-  const chapterIdxes = [];
-  for (let i = 0; i < summary.book.numChapters; i++) {
-    chapterIdxes.push(i + 1);
-  }
+  const chapterIdxes = useMemo(() => {
+    const idxes = [];
+    for (let i = 0; i < book.numChapters; i++) {
+      idxes.push(i + 1);
+    }
+    return idxes;
+  }, [book]);
 
   return (
     <Paper elevation={1}>

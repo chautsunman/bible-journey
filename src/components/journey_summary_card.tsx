@@ -19,7 +19,7 @@ interface JourneySummaryCardProps {
 const JourneySummaryCard = (props: JourneySummaryCardProps) => {
   const summaries = useMemo(() => BOOKS.map((book) => {
     return new Summary(book, '#999999');
-  }).slice(0, 5), []);
+  }), []);
 
   return (
     <Paper elevation={4} sx={{height: 400, width: '100%', overflow: 'auto', p: 2}}>

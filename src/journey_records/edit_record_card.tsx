@@ -14,9 +14,10 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Grid from '@mui/material/Grid';
 import FormControl from '@mui/material/FormControl';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
-import BookChapterPicker from './book_chapter_picker';
-import TypeColorBlock from './type_color_block';
+import BookChapterPicker from '../components/book_chapter_picker';
+import TypeColorBlock from '../components/type_color_block';
 
 import JourneyRecord from '../types/journey_record';
 import JourneyType from '../types/journey_type';
@@ -75,6 +76,9 @@ const EditRecordCard = (props: EditRecordCardProps) => {
     <Card>
       <CardContent>
         <Grid container spacing={1}>
+          <Grid item xs={12}>
+            <Typography variant="h6">Add New Journey Record</Typography>
+          </Grid>
           <Grid item xs={12}>
             <BookChapterPicker
               bookChapter={(record.content.length) ? record.content[0] : null}
