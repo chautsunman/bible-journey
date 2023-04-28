@@ -1,21 +1,47 @@
 {
-  "name": "my-app",
+  "name": "bible-journey",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/react": "^11.10.6",
+    "@emotion/styled": "^11.10.6",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.12.2",
+    "@mui/x-date-pickers": "^6.2.1",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "@types/jest": "^29.5.1",
+    "@types/node": "^18.16.1",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.1",
+    "@types/uuid": "^9.0.1",
+    "ag-grid-community": "^29.3.3",
+    "ag-grid-react": "^29.3.3",
+    "firebase": "^9.20.0",
+    "firebaseui": "^6.0.2",
+    "localforage": "^1.10.0",
+    "luxon": "^3.3.0",
+    "match-sorter": "^6.3.1",
+    "notistack": "^3.0.1",
+    "react": "^17.0.2",
+    "react-color": "^2.19.3",
+    "react-dom": "^17.0.2",
+    "react-firebaseui": "^6.0.0",
+    "react-router-dom": "^6.10.0",
     "react-scripts": "5.0.1",
+    "reactfire": "^4.2.2",
+    "sort-by": "^1.2.0",
+    "typescript": "^5.0.4",
+    "uuid": "^9.0.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "startFirebaseEmulator": "firebase emulators:start"
   },
   "eslintConfig": {
     "extends": [
@@ -34,5 +60,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/luxon": "^3.3.0",
+    "@types/react-color": "^3.0.6"
   }
 }
