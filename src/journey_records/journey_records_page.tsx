@@ -55,6 +55,17 @@ const JourneyRecordsPage = (props: JourneyRecordsPageProps) => {
     onResetNewRecord();
   }, [newJourneyRecord, appContext, onResetNewRecord, enqueueSnackbar]);
 
+  const onDeleteRecord = useCallback(async (record: JourneyRecord) => {
+    console.log('onDeleteRecord - delete start');
+    const res = await appContext.journeyService.deleteJourney(record);
+    console.log('onDeleteRecord - delete end');
+    if (res) {
+      enqueueSnackbar('Deleted', {variant: 'success'});
+    } else {
+      enqueueSnackbar('Delete error.', {variant: 'error'});
+    }
+  }, [appContext]);
+
   useEffect(() => {
     (async () => {
       const bookChapterFilter = recordsFilter.bookChapterFilter;
@@ -101,7 +112,7 @@ const JourneyRecordsPage = (props: JourneyRecordsPageProps) => {
         <Box key={record.id} sx={{
           mb: 1
         }}>
-          <RecordCard record={record}/>
+          <RecordCard record={record} onDeleteRecord={onDeleteRecord}/>
         </Box>
       ))}
     </Box>

@@ -1,4 +1,4 @@
-import { addDoc, collection, Firestore, getDocs, query, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, Firestore, getDocs, query, where } from 'firebase/firestore';
 
 import { IService } from "./service_base";
 import JourneyRecord from "../types/journey_record";
@@ -47,6 +47,20 @@ class JourneyService implements IService {
       return true;
     } catch (err) {
       console.log('addJourney - err', err);
+      return false;
+    }
+  }
+
+  async deleteJourney(journeyRecord: JourneyRecord) {
+    try {
+      const recordId = journeyRecord.id;
+      console.log(`deleteJourney - deleting journey ${recordId}`);
+      const journeyDoc = doc(this.firestore, 'journeys', recordId);
+      await deleteDoc(journeyDoc);
+      console.log(`deleteJourney - deleted journey ${recordId}`);
+      return true;
+    } catch (err) {
+      console.log('deleteJourney - err', err);
       return false;
     }
   }
