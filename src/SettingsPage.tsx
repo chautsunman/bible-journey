@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -37,31 +37,48 @@ const SettingsPage = (props: SettingsPageProps) => {
     };
   }, [settingsService, onSettingsUpdate]);
 
-  const onNewJourneyType = async (journeyType: JourneyType) => {
+  const onSaveNewJourneyType = useCallback(async (journeyType: JourneyType) => {
     if (!journeyType.isValid()) {
-      console.log('onNewJourneyType - invalid journeyType');
+      console.log('onSaveNewJourneyType - invalid journeyType');
       enqueueSnackbar('Invalid new Journey Type', {variant: 'error'});
       return;
     }
-    console.log('onNewJourneyType - start');
+    console.log('onSaveNewJourneyType - start');
     const newSettings = settings.copy();
     newSettings.journeyTypes.push(journeyType);
-    console.log('onNewJourneyType - saving');
+    console.log('onSaveNewJourneyType - saving');
     const res = await settingsService.updateSettings(newSettings);
-    console.log('onNewJourneyType - saved', res);
+    console.log('onSaveNewJourneyType - saved', res);
     if (res) {
       enqueueSnackbar('Saved. Page is refreshing.', {variant: 'success'});
     } else {
-      console.log('onNewJourneyType - save failed');
+      console.log('onSaveNewJourneyType - save failed');
       enqueueSnackbar('Saving error.', {variant: 'error'});
     }
-  };
+  }, [settings, settingsService, enqueueSnackbar]);
+
+  const onSaveJourneyType = useCallback(async (journeyType: JourneyType) => {
+    if (!journeyType.isValid()) {
+      console.log('onSaveJourneyType - invalid journeyType');
+      enqueueSnackbar('Invalid Journey Type', {variant: 'error'});
+      return;
+    }
+    console.log('onSaveJourneyType - start');
+  }, [enqueueSnackbar]);
+
+  const onDeleteJourneyType = useCallback(async (journeyType: JourneyType) => {
+    console.log('onDeleteJourneyType - start');
+  }, []);
 
   return (
     <Box sx={{ p: 2 }}>
       <Grid container spacing={2}>
         <Grid item xs={4}>
-          <JourneyTypesSettingsCard journeyTypes={settings.journeyTypes} onSaveNewJourneyType={onNewJourneyType}/>
+          <JourneyTypesSettingsCard
+            journeyTypes={settings.journeyTypes}
+            onSaveNewJourneyType={onSaveNewJourneyType}
+            onSaveJourneyType={onSaveJourneyType}
+            onDeleteJourneyType={onDeleteJourneyType}/>
         </Grid>
       </Grid>
     </Box>
