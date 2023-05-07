@@ -1,10 +1,12 @@
 import Settings from "../types/settings";
 
-import { doc, Firestore, onSnapshot, setDoc, Unsubscribe } from 'firebase/firestore';
+import { doc, Firestore, onSnapshot, setDoc, Unsubscribe, updateDoc } from 'firebase/firestore';
 
 import { settingsFirestoreConvertor } from "./firebase/firestore_convertors";
 import { IService } from "./service_base";
 import { Subscriber, Publisher } from "./subscription";
+
+import JourneyType from "../types/journey_type";
 
 class SettingsService extends Publisher<Settings> implements IService {
   firestore: Firestore;
@@ -81,6 +83,26 @@ class SettingsService extends Publisher<Settings> implements IService {
       return true;
     } catch (err) {
       console.log('updateSettings - err', err);
+      return false;
+    }
+  };
+
+  updateJourneyTypes = async (journeyTypes: JourneyType[]) => {
+    try {
+      for (let i = 0; i < journeyTypes.length; i++) {
+        if (!journeyTypes[i].isValid()) {
+          console.log('updateJourneyType - invalid journeyType');
+          return false;
+        }
+      }
+      console.log('updateJourneyType - start');
+      const settingsDoc = doc(this.firestore, 'settings', this.uid);
+      await updateDoc(settingsDoc, {
+        journeyTypes: [...journeyTypes.map((journeyType) => journeyType.toObj())]
+      });
+      return true;
+    } catch (err) {
+      console.log('updateJourneyType - err', err);
       return false;
     }
   };

@@ -44,10 +44,9 @@ const SettingsPage = (props: SettingsPageProps) => {
       return;
     }
     console.log('onSaveNewJourneyType - start');
-    const newSettings = settings.copy();
-    newSettings.journeyTypes.push(journeyType);
+    const newJourneyTypes = [...settings.journeyTypes, journeyType];
     console.log('onSaveNewJourneyType - saving');
-    const res = await settingsService.updateSettings(newSettings);
+    const res = await settingsService.updateJourneyTypes(newJourneyTypes);
     console.log('onSaveNewJourneyType - saved', res);
     if (res) {
       enqueueSnackbar('Saved. Page is refreshing.', {variant: 'success'});
@@ -64,11 +63,36 @@ const SettingsPage = (props: SettingsPageProps) => {
       return;
     }
     console.log('onSaveJourneyType - start');
-  }, [enqueueSnackbar]);
+    const newJourneyTypes = [...settings.journeyTypes];
+    for (let i = 0; i < newJourneyTypes.length; i++) {
+      if (newJourneyTypes[i].id === journeyType.id) {
+        newJourneyTypes[i] = journeyType;
+      }
+    }
+    console.log('onSaveJourneyType - saving');
+    const res = await settingsService.updateJourneyTypes(newJourneyTypes);
+    console.log('onSaveJourneyType - saved', res);
+    if (res) {
+      enqueueSnackbar('Saved. Page is refreshing.', {variant: 'success'});
+    } else {
+      console.log('onSaveJourneyType - save failed');
+      enqueueSnackbar('Saving error.', {variant: 'error'});
+    }
+  }, [settings, settingsService, enqueueSnackbar]);
 
   const onDeleteJourneyType = useCallback(async (journeyType: JourneyType) => {
     console.log('onDeleteJourneyType - start');
-  }, []);
+    const newJourneyTypes = [...settings.journeyTypes].filter((_journeyType) => _journeyType.id !== journeyType.id);
+    console.log('onDeleteJourneyType - saving');
+    const res = await settingsService.updateJourneyTypes(newJourneyTypes);
+    console.log('onDeleteJourneyType - saved', res);
+    if (res) {
+      enqueueSnackbar('Saved. Page is refreshing.', {variant: 'success'});
+    } else {
+      console.log('onDeleteJourneyType - save failed');
+      enqueueSnackbar('Saving error.', {variant: 'error'});
+    }
+  }, [settings, settingsService, enqueueSnackbar]);
 
   return (
     <Box sx={{ p: 2 }}>
