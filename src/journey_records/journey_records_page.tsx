@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import { useSnackbar } from 'notistack';
 
 import RecordCard from './record_card';
@@ -64,7 +63,7 @@ const JourneyRecordsPage = (props: JourneyRecordsPageProps) => {
     } else {
       enqueueSnackbar('Delete error.', {variant: 'error'});
     }
-  }, [appContext]);
+  }, [appContext, enqueueSnackbar]);
 
   useEffect(() => {
     (async () => {

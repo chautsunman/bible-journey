@@ -10,8 +10,6 @@ import JourneySummaryItem from './journey_summary_item';
 import { Summary } from '../types/summary';
 import { BOOKS, BookChapter } from '../bible/constants';
 
-import { getRandomColorHex } from '../utils/color';
-
 interface JourneySummaryCardProps {
   onSelectBookChapter: (bookChapter: BookChapter) => void;
 }
