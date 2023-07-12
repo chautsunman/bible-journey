@@ -28,7 +28,7 @@ const BibleReader = () => {
       </Box>
 
       <Box>
-        {bookChapter && bookChapter.toString()}
+        <a href={(bookChapter) ? bookChapter.getBibleAppLink() : ''}>{(bookChapter) ? bookChapter.getBibleAppLink() : ''}</a>
       </Box>
     </Paper>
   );
