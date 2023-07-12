@@ -8,5 +8,8 @@ service cloud.firestore {
     match /settings/{uid} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
+    match /colors/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
   }
 }

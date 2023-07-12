@@ -8,15 +8,17 @@ import Chip from '@mui/material/Chip';
 import TypeColorBlock from './type_color_block';
 
 import { Summary } from '../types/summary';
+import Colors from '../types/colors';
 import { BookChapter } from '../bible/constants';
 
 interface JourneySummaryItemProps {
   summary: Summary;
   onSelectBookChapter: (bookChapter: BookChapter) => void;
+  colors: Colors;
 }
 
 const JourneySummaryItem = (props: JourneySummaryItemProps) => {
-  const {summary, onSelectBookChapter} = props;
+  const {summary, onSelectBookChapter, colors} = props;
   const book = summary.book;
 
   const chapterIdxes = useMemo(() => {
@@ -42,7 +44,7 @@ const JourneySummaryItem = (props: JourneySummaryItemProps) => {
                   <Box sx={{flex: '0 0 auto'}}>{chapterIdx}</Box>
                   <Box sx={{flex: '0 0 4px'}}/>
                   <Box sx={{flex: '0 0 auto'}}>
-                    <TypeColorBlock color={summary.color}/>
+                    <TypeColorBlock color={colors.getColorForKey(new BookChapter(summary.book, chapterIdx).toString())}/>
                   </Box>
                 </Box>
               }

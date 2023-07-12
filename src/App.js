@@ -17,6 +17,7 @@ import BibleAppBar from './components/app_bar';
 import AppContext from './app_components/app_context';
 import SettingsService from './services/settings_service';
 import JourneyService from './services/journey_service';
+import ColorsService from './services/colors_service';
 
 const App = () => {
   const auth = useAuth();
@@ -32,7 +33,8 @@ const App = () => {
         const appContext = new AppContext(
           user.uid,
           new SettingsService(firestore),
-          new JourneyService(firestore)
+          new JourneyService(firestore),
+          new ColorsService(firestore)
         );
         setAppContext(appContext);
       } else {

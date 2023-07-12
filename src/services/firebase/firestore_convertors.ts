@@ -5,6 +5,7 @@ import JourneyRecord from "../../types/journey_record";
 import Settings from "../../types/settings";
 import { BookChapter } from "../../bible/constants";
 import JourneyType from "../../types/journey_type";
+import Colors from "../../types/colors";
 
 export const journeyRecordFirestoreConvertor: FirestoreDataConverter<JourneyRecord> = {
   toFirestore: (journeyRecord) => {
@@ -63,6 +64,25 @@ export const settingsFirestoreConvertor: FirestoreDataConverter<Settings> = {
       return settings;
     } catch (err) {
       throw new Error('cannot parse data to Settings');
+    }
+  }
+};
+
+export const colorsFirestoreConvertor: FirestoreDataConverter<Colors> = {
+  toFirestore: (colors) => {
+    return {};
+  },
+  fromFirestore: (snapshot, options) => {
+    const data = snapshot.data(options);
+    try {
+      if ((!('colors' in data))) {
+        throw new Error('cannot parse data to Colors');
+      }
+      const colorsObj = data['colors'];
+      const colors = new Colors(colorsObj);
+      return colors;
+    } catch (err) {
+      throw new Error('cannot parse data to Colors');
     }
   }
 };

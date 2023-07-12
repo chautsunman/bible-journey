@@ -34,7 +34,7 @@ const Home = (props: HomePageProps) => {
           </Box>
 
           <Box>
-            <JourneySummaryCard onSelectBookChapter={onSelectBookChapter}/>
+            <JourneySummaryCard appContext={appContext} onSelectBookChapter={onSelectBookChapter}/>
           </Box>
         </Grid>
         <Grid item xs={6}>
