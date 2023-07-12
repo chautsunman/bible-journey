@@ -51,6 +51,8 @@ exports.updateColor = functions.firestore
       for (let bookChapterKey in colors) {
         if (colors[bookChapterKey].length) {
           combinedColors[bookChapterKey] = combineColors(colors[bookChapterKey]);
+        } else {
+          combinedColors[bookChapterKey] = '#999999';
         }
       }
       console.log(`updateColor - combinedColors - ${uid}, ${JSON.stringify(combinedColors)}`);
