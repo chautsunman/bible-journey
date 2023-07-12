@@ -21,7 +21,7 @@ interface JourneySummaryCardProps {
 const JourneySummaryCard = (props: JourneySummaryCardProps) => {
   const {appContext} = props;
 
-  const [summaries, setSummaries] = useState<Summary[]>(INIT_SUMMARIES);
+  const [summaries] = useState<Summary[]>(INIT_SUMMARIES);
   const [colors, setColors] = useState<Colors>(Colors.newEmptyRecord());
 
   const onColorsUpdate: Subscriber<Colors> = useMemo(() => ({
