@@ -7,24 +7,22 @@ import Chip from '@mui/material/Chip';
 
 import TypeColorBlock from './type_color_block';
 
-import { Summary } from '../types/summary';
-import Colors from '../types/colors';
+import { BookSummary } from '../types/summary';
 import { BookChapter } from '../bible/constants';
 
 interface JourneySummaryItemProps {
-  summary: Summary;
+  bookSummary: BookSummary;
   onSelectBookChapter: (bookChapter: BookChapter) => void;
-  colors: Colors;
 }
 
 const JourneySummaryItem = (props: JourneySummaryItemProps) => {
-  const {summary, onSelectBookChapter, colors} = props;
-  const book = summary.book;
+  const {bookSummary, onSelectBookChapter} = props;
+  const book = bookSummary.book;
 
   const chapterIdxes = useMemo(() => {
     const idxes = [];
     for (let i = 0; i < book.numChapters; i++) {
-      idxes.push(i + 1);
+      idxes.push((i + 1).toString());
     }
     return idxes;
   }, [book]);
@@ -33,7 +31,7 @@ const JourneySummaryItem = (props: JourneySummaryItemProps) => {
     <Paper elevation={1}>
       <Box sx={{p: 1, display: 'flex'}}>
         <Box sx={{flex: '0 0 128px'}}>
-          {summary.book.name}
+          {book.name}
         </Box>
         <Box sx={{flex: '1 1 0px'}}>
           {chapterIdxes.map((chapterIdx) => (
@@ -44,11 +42,11 @@ const JourneySummaryItem = (props: JourneySummaryItemProps) => {
                   <Box sx={{flex: '0 0 auto'}}>{chapterIdx}</Box>
                   <Box sx={{flex: '0 0 4px'}}/>
                   <Box sx={{flex: '0 0 auto'}}>
-                    <TypeColorBlock color={colors.getColorForKey(new BookChapter(summary.book, chapterIdx).toString())}/>
+                    <TypeColorBlock color={bookSummary.getChapterColor(chapterIdx)}/>
                   </Box>
                 </Box>
               }
-              onClick={() => onSelectBookChapter(new BookChapter(summary.book, chapterIdx))}
+              onClick={() => onSelectBookChapter(new BookChapter(book, parseInt(chapterIdx)))}
               sx={{width: '64px', pointer: 'cursor'}}/>
           ))}
         </Box>

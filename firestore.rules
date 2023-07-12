@@ -3,13 +3,15 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /journeys/{uid} {
       allow read: if request.auth != null && request.auth.uid == resource.data.uid;
-      allow write: if request.auth != null && request.auth.uid == request.resource.data.uid;
+      allow write: if request.auth != null && request.method == 'create' && request.auth.uid == request.resource.data.uid;
+      allow delete: if request.auth != null && request.method == 'delete' && request.auth.uid == resource.data.uid;
     }
     match /settings/{uid} {
       allow read, write: if request.auth != null && request.auth.uid == uid;
     }
-    match /colors/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+    match /summary/{uid} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.uid;
+      allow write: if request.auth != null && request.auth.uid == request.resource.data.uid;
     }
   }
 }

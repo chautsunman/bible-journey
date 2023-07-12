@@ -1,20 +1,20 @@
 import { doc, Firestore, onSnapshot, Unsubscribe } from 'firebase/firestore';
 
-import { colorsFirestoreConvertor } from "./firebase/firestore_convertors";
+import { summaryFirestoreConvertor } from "./firebase/firestore_convertors";
 import { IService } from "./service_base";
 import { Subscriber, Publisher } from "./subscription";
 
-import Colors from "../types/colors";
+import { Summary, INIT_SUMMARY } from "../types/summary";
 
-class ColorsService extends Publisher<Colors> implements IService {
+class SummaryService extends Publisher<Summary> implements IService {
   firestore: Firestore;
   uid: string;
 
-  colors: Colors = Colors.newEmptyRecord();
+  summary: Summary = INIT_SUMMARY;
 
   unsubscribeData: Unsubscribe;
 
-  subscribers: Subscriber<Colors>[] = [];
+  subscribers: Subscriber<Summary>[] = [];
 
   constructor(firestore: Firestore) {
     super();
@@ -23,19 +23,19 @@ class ColorsService extends Publisher<Colors> implements IService {
 
   init = (uid: string) => {
     this.uid = uid;
-    this._subColors(uid);
+    this._subSummary(uid);
   }
 
-  _subColors = (uid: string) => {
-    console.log('_subColors', uid);
-    const colorsDoc = doc(this.firestore, 'colors', uid).withConverter(colorsFirestoreConvertor);
+  _subSummary = (uid: string) => {
+    console.log('_subSummary', uid);
+    const colorsDoc = doc(this.firestore, 'summary', uid).withConverter(summaryFirestoreConvertor);
     this.unsubscribeData = onSnapshot(colorsDoc, (doc) => {
       if (doc.exists()) {
-        console.log('get colors data', this.subscribers.length);
+        console.log('get summary data', this.subscribers.length);
         const data = doc.data()!;
-        this.colors = data;
+        this.summary = data;
         this.subscribers.forEach((subscriber) => {
-          subscriber.onData(this.colors);
+          subscriber.onData(this.summary);
         });
       }
     });
@@ -47,25 +47,25 @@ class ColorsService extends Publisher<Colors> implements IService {
     }
   }
 
-  subscribe = (subscriber: Subscriber<Colors>) => {
+  subscribe = (subscriber: Subscriber<Summary>) => {
     if (!(this.subscribers.includes(subscriber))) {
       this.subscribers.push(subscriber);
-      subscriber.onData(this.colors);
-      console.log('subscribe - subscribed ColorsService');
+      subscriber.onData(this.summary);
+      console.log('subscribe - subscribed SummaryService');
     } else {
       console.log('subscribe - subscribed before');
     }
   }
 
-  unsubscribe = (subscriber: Subscriber<Colors>) => {
+  unsubscribe = (subscriber: Subscriber<Summary>) => {
     const idx = this.subscribers.indexOf(subscriber);
     if (idx > -1) {
       this.subscribers.splice(idx, 1);
-      console.log('unsubscribe - un-subscribed ColorsService');
+      console.log('unsubscribe - un-subscribed SummaryService');
     } else {
       console.log('unsubscribe - subscriber was not added before');
     }
   }
 }
 
-export default ColorsService;
+export default SummaryService;

@@ -1,20 +1,20 @@
 import SettingsService from "../services/settings_service";
 import JourneyService from "../services/journey_service";
-import ColorsService from "../services/colors_service";
+import SummaryService from "../services/summary_service";
 
 class AppContext {
   settingsService: SettingsService;
   journeyService: JourneyService;
-  colorsService: ColorsService;
+  summaryService: SummaryService;
 
-  constructor(uid: string, settingsService: SettingsService, journeyService: JourneyService, colorsService: ColorsService) {
+  constructor(uid: string, settingsService: SettingsService, journeyService: JourneyService, summaryService: SummaryService) {
     this.settingsService = settingsService;
     this.journeyService = journeyService;
-    this.colorsService = colorsService;
+    this.summaryService = summaryService;
 
     this.settingsService.init(uid);
     this.journeyService.init(uid);
-    this.colorsService.init(uid);
+    this.summaryService.init(uid);
   }
 }
 

@@ -1,7 +1,6 @@
 const functions = require("firebase-functions");
 require("firebase-functions/logger/compat");
 const admin = require('firebase-admin');
-const { addDoc, collection, deleteDoc, doc, Firestore, getDocs, query, where } = require('firebase/firestore');
 
 const {combineColors} = require('./colorUtils');
 
@@ -27,50 +26,53 @@ exports.updateColor = functions.firestore
         return;
       }
 
-      const userId = document.uid;
+      const uid = document.uid;
       const content = document.content;
-      console.log(`updateColor - get related journeys and colors - ${userId}, ${content.length}`);
+      console.log(`updateColor - get related journeys and colors - ${uid}, ${content.length}`);
       const colors = {};
       for (let i = 0; i < content.length; i++) {
-        const bookChapterStr = content[i];
-        colors[bookChapterStr] = [];
-        console.log(`updateColor - get journeys start - ${userId}, ${bookChapterStr}`);
+        const bookChapterKey = content[i];
+        colors[bookChapterKey] = [];
+        console.log(`updateColor - get journeys start - ${uid}, ${bookChapterKey}`);
         const journeysCollection = db.collection('journeys');
-        const journeysQuery = journeysCollection.where('uid', '==', userId).where('content', 'array-contains', bookChapterStr);
+        const journeysQuery = journeysCollection.where('uid', '==', uid).where('content', 'array-contains', bookChapterKey);
         const querySnapshot = await journeysQuery.get();
-        console.log(`updateColor - get journeys end - ${userId}, ${bookChapterStr}, ${querySnapshot.size}`);
+        console.log(`updateColor - get journeys end - ${uid}, ${bookChapterKey}, ${querySnapshot.size}`);
         querySnapshot.forEach((doc) => {
           const journeyRecord = doc.data();
           if (journeyRecord.type && journeyRecord.type.color) {
-            colors[bookChapterStr].push(journeyRecord.type.color);
+            colors[bookChapterKey].push(journeyRecord.type.color);
           }
         });
-        console.log(`updateColor - get colors - ${userId}, ${bookChapterStr}, ${querySnapshot.size}, ${JSON.stringify(colors[bookChapterStr])}`);
+        console.log(`updateColor - get colors - ${uid}, ${bookChapterKey}, ${querySnapshot.size}, ${JSON.stringify(colors[bookChapterKey])}`);
       }
 
       const combinedColors = {};
-      for (let key in colors) {
-        if (colors[key].length) {
-          combinedColors[key] = combineColors(colors[key]);
+      for (let bookChapterKey in colors) {
+        if (colors[bookChapterKey].length) {
+          combinedColors[bookChapterKey] = combineColors(colors[bookChapterKey]);
         }
       }
-      console.log(`updateColor - combinedColors - ${userId}, ${JSON.stringify(combinedColors)}`);
+      console.log(`updateColor - combinedColors - ${uid}, ${JSON.stringify(combinedColors)}`);
 
-      const colorsDocRef = db.collection('colors').doc(userId);
-      const colorsDoc = await colorsDocRef.get();
-      if (!colorsDoc.exists) {
-        console.log(`updateColor - create user colors doc - ${userId}`);
-        colorsDocRef.set({
-          colors: {}
+      const summaryDocRef = db.collection('summary').doc(uid);
+      const summaryDoc = await summaryDocRef.get();
+      if (!summaryDoc.exists) {
+        console.log(`updateColor - create user colors doc - ${uid}`);
+        summaryDocRef.set({
+          uid: uid,
+          books: {}
         });
       } else {
-        console.log(`updateColor - user colors doc exists - ${userId}}`);
+        console.log(`updateColor - user colors doc exists - ${uid}}`);
       }
       const colorsUpdateObj = {};
-      for (let key in combinedColors) {
-        colorsUpdateObj[`colors.${key}`] = combinedColors[key];
+      for (let bookChapterKey in combinedColors) {
+        const bookKey = bookChapterKey.split(' - ')[0];
+        const chapterKey = bookChapterKey.split(' - ')[1];
+        colorsUpdateObj[`books.${bookKey}.colors.${chapterKey}`] = combinedColors[bookChapterKey];
       }
-      console.log(`updateColor - colorsUpdateObj - ${userId}, ${JSON.stringify(colorsUpdateObj)}`);
-      const updateColorsRes = await colorsDocRef.update(colorsUpdateObj);
-      console.log(`updateColor - update colors - ${userId}, ${updateColorsRes}`);
+      console.log(`updateColor - colorsUpdateObj - ${uid}, ${JSON.stringify(colorsUpdateObj)}`);
+      const updateColorsRes = await summaryDocRef.update(colorsUpdateObj);
+      console.log(`updateColor - update colors - ${uid}, ${updateColorsRes}`);
     });

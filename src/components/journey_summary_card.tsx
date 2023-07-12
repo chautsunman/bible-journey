@@ -8,10 +8,9 @@ import Typography from '@mui/material/Typography';
 import JourneySummaryItem from './journey_summary_item';
 
 import AppContext from '../app_components/app_context';
-import { Summary, INIT_SUMMARIES } from '../types/summary';
-import Colors from '../types/colors';
+import { Summary, INIT_SUMMARY } from '../types/summary';
 import { Subscriber } from '../services/subscription';
-import { BookChapter } from '../bible/constants';
+import { BookChapter, BOOKS } from '../bible/constants';
 
 interface JourneySummaryCardProps {
   appContext: AppContext;
@@ -21,22 +20,21 @@ interface JourneySummaryCardProps {
 const JourneySummaryCard = (props: JourneySummaryCardProps) => {
   const {appContext} = props;
 
-  const [summaries] = useState<Summary[]>(INIT_SUMMARIES);
-  const [colors, setColors] = useState<Colors>(Colors.newEmptyRecord());
+  const [summary, setSummary] = useState<Summary>(INIT_SUMMARY);
 
-  const onColorsUpdate: Subscriber<Colors> = useMemo(() => ({
+  const onSummaryUpdate: Subscriber<Summary> = useMemo(() => ({
     onData: (data) => {
-      console.log('onColorsUpdate - onData', data);
-      setColors(data);
+      console.log('onSummaryUpdate - onData', data);
+      setSummary(data);
     }
-  }), [setColors]);
+  }), [setSummary]);
 
   useEffect(() => {
-    appContext.colorsService.subscribe(onColorsUpdate);
+    appContext.summaryService.subscribe(onSummaryUpdate);
     return () => {
-      appContext.colorsService.unsubscribe(onColorsUpdate);
+      appContext.summaryService.unsubscribe(onSummaryUpdate);
     };
-  }, [appContext, onColorsUpdate]);
+  }, [appContext, onSummaryUpdate]);
 
   return (
     <Paper elevation={4} sx={{height: 400, width: '100%', overflow: 'auto', p: 2}}>
@@ -45,9 +43,9 @@ const JourneySummaryCard = (props: JourneySummaryCardProps) => {
       </Box>
 
       <Box>
-        {summaries.map((summary) => (
-          <Box key={summary.book.name} sx={{mb: 1}}>
-            <JourneySummaryItem summary={summary} onSelectBookChapter={props.onSelectBookChapter} colors={colors}/>
+        {BOOKS.map((book) => (
+          <Box key={book.name} sx={{mb: 1}}>
+            <JourneySummaryItem bookSummary={summary.getBookSummary(book)} onSelectBookChapter={props.onSelectBookChapter}/>
           </Box>
         ))}
       </Box>
