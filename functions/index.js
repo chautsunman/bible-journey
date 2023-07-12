@@ -3,6 +3,8 @@ require("firebase-functions/logger/compat");
 const admin = require('firebase-admin');
 const { addDoc, collection, deleteDoc, doc, Firestore, getDocs, query, where } = require('firebase/firestore');
 
+const {combineColors} = require('./colorUtils');
+
 admin.initializeApp();
 
 const db = admin.firestore();
@@ -33,9 +35,9 @@ exports.updateColor = functions.firestore
         const bookChapterStr = content[i];
         colors[bookChapterStr] = [];
         console.log(`updateColor - get journeys start - ${userId}, ${bookChapterStr}`);
-        const journeysCollection = collection(db, 'journeys');
-        const journeysQuery = query(journeysCollection, where('uid', '==', userId), where('content', 'array-contains', bookChapterStr));
-        const querySnapshot = await getDocs(journeysQuery);
+        const journeysCollection = db.collection('journeys');
+        const journeysQuery = journeysCollection.where('uid', '==', userId).where('content', 'array-contains', bookChapterStr);
+        const querySnapshot = await journeysQuery.get();
         console.log(`updateColor - get journeys end - ${userId}, ${bookChapterStr}, ${querySnapshot.size}`);
         querySnapshot.forEach((doc) => {
           const journeyRecord = doc.data();
@@ -43,6 +45,32 @@ exports.updateColor = functions.firestore
             colors[bookChapterStr].push(journeyRecord.type.color);
           }
         });
-        console.log(`updateColor - get colors - ${userId}, ${bookChapterStr}, ${querySnapshot.size}, ${colors[bookChapterStr].length}`);
+        console.log(`updateColor - get colors - ${userId}, ${bookChapterStr}, ${querySnapshot.size}, ${JSON.stringify(colors[bookChapterStr])}`);
       }
+
+      const combinedColors = {};
+      for (let key in colors) {
+        if (colors[key].length) {
+          combinedColors[key] = combineColors(colors[key]);
+        }
+      }
+      console.log(`updateColor - combinedColors - ${userId}, ${JSON.stringify(combinedColors)}`);
+
+      const colorsDocRef = db.collection('colors').doc(userId);
+      const colorsDoc = await colorsDocRef.get();
+      if (!colorsDoc.exists) {
+        console.log(`updateColor - create user colors doc - ${userId}`);
+        colorsDocRef.set({
+          colors: {}
+        });
+      } else {
+        console.log(`updateColor - user colors doc exists - ${userId}}`);
+      }
+      const colorsUpdateObj = {};
+      for (let key in combinedColors) {
+        colorsUpdateObj[`colors.${key}`] = combinedColors[key];
+      }
+      console.log(`updateColor - colorsUpdateObj - ${userId}, ${JSON.stringify(colorsUpdateObj)}`);
+      const updateColorsRes = await colorsDocRef.update(colorsUpdateObj);
+      console.log(`updateColor - update colors - ${userId}, ${updateColorsRes}`);
     });
