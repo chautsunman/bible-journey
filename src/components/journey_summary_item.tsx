@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -27,6 +27,18 @@ const JourneySummaryItem = (props: JourneySummaryItemProps) => {
     return idxes;
   }, [book]);
 
+  const [onSelectBookChapterCbs, setOnSelectBookChapterCbs] = useState<any[]>([]);
+
+  useEffect(() => {
+    const cbs = [];
+    for (let i = 0; i < book.numChapters; i++) {
+      cbs.push(() => onSelectBookChapter(new BookChapter(book, i)));
+    }
+    setOnSelectBookChapterCbs(cbs);
+  }, [book, onSelectBookChapter, setOnSelectBookChapterCbs]);
+
+  const emptyCb = useCallback(() => {}, []);
+
   return (
     <Paper elevation={1}>
       <Box sx={{p: 1, display: 'flex'}}>
@@ -46,7 +58,7 @@ const JourneySummaryItem = (props: JourneySummaryItemProps) => {
                   </Box>
                 </Box>
               }
-              onClick={() => onSelectBookChapter(new BookChapter(book, parseInt(chapterIdx)))}
+              onClick={(onSelectBookChapterCbs.length) ? onSelectBookChapterCbs[parseInt(chapterIdx)] : emptyCb}
               sx={{width: '64px', pointer: 'cursor'}}/>
           ))}
         </Box>
